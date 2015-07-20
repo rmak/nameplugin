@@ -25,17 +25,29 @@ import java.io.IOException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.security.authentication.util.KerberosName;
 import org.apache.hadoop.security.authentication.util.KerberosUtil;
+import org.apache.hadoop.util.ReflectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This class implements parsing and handling of Kerberos principal names. In 
  * particular, it splits them apart and translates them down into local
  * operating system names.
  */
 @SuppressWarnings("all")
+// TBD - why limited private for hdfs and mapreduce?
+// TBD - what's the difference between HadoopKerberosName and KerberosName?
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class HadoopKerberosName extends KerberosName {
+  private static final Log LOG = LogFactory.getLog(HadoopKerberosName.class);
+  
+  private UserNameMappingServiceProvider impl;
+  private static Configuration conf = null;
+  
 
   /**
    * Create a name from the full Kerberos principal name.
@@ -43,9 +55,89 @@ public class HadoopKerberosName extends KerberosName {
    */
   public HadoopKerberosName(String name) {
     super(name);
+
+    if (conf == null)
+      conf = new Configuration();
+    
+// TBD - may not want to have default impl and instead directly pass through to use rules
+//    impl = 
+//        ReflectionUtils.newInstance(
+//          conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, 
+//                        ShellBasedUserNameMapping.class, 
+//                        UserNameMappingServiceProvider.class), 
+//          conf);
+    try {
+      impl = 
+        ReflectionUtils.newInstance(
+          conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, null,
+                        UserNameMappingServiceProvider.class), 
+          conf);
+    } catch (Exception e) {
+      impl = null;
+    }
+
+//    if(LOG.isDebugEnabled())
+//      LOG.debug("user name mapping impl=" + impl.getClass().getName());
+    if (impl == null) 
+      LOG.info("user name mapping impl=null");
+    else
+      LOG.info("user name mapping impl=" + impl.getClass().getName());
+
+/*
+    // TBD - dont know who using the following logic
+    final String defaultRule;
+    switch (SecurityUtil.getAuthenticationMethod(conf)) {
+      case KERBEROS:
+      case KERBEROS_SSL:
+        try {
+          KerberosUtil.getDefaultRealm();
+        } catch (Exception ke) {
+          throw new IllegalArgumentException("Can't get Kerberos realm", ke);
+        }
+// TBD -if using kerberos, default rule only applies to default realm
+        defaultRule = "DEFAULT";
+        break;
+      default:
+// TBD - if simple authentication, use service name for all realms
+        // just extract the simple user name
+        defaultRule = "RULE:[1:$1] RULE:[2:$1]";
+        break; 
+    }
+    String ruleString = conf.get(HADOOP_SECURITY_AUTH_TO_LOCAL, defaultRule);
+    setRules(ruleString);
+*/
   }
+  
+  /**
+   * Get the short name of a given user.
+   * 
+   * @param user get short name of this user
+   * @return short name a given user
+   */
+  @Override
+  public synchronized String getShortName() throws IOException {
+    String userShortName;
+    if (impl == null) {
+      LOG.info("impl is null - trying " + super.getClass().getName());
+      userShortName = super.getShortName();
+      LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+    }
+    else {
+      userShortName = impl.getShortName(super.toString());
+      LOG.info("user short name from impl " + impl.getClass().getName() + " = " + userShortName);
+      if (userShortName == null || userShortName.isEmpty()) {
+        LOG.info("user short name from impl is null or empty - trying " + super.getClass().getName());
+        userShortName = super.getShortName();
+        LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+      }      
+    }
+    return userShortName;
+  }
+  
+// TBD - why setConfiguration separately? who uses it?
   /**
    * Set the static configuration to get the rules.
+   * Also save configuration for initialization use if call before object created.
    * <p/>
    * IMPORTANT: This method does a NOP if the rules have been set already.
    * If there is a need to reset the rules, the {@link KerberosName#setRules(String)}
@@ -56,6 +148,7 @@ public class HadoopKerberosName extends KerberosName {
    */
   public static void setConfiguration(Configuration conf) throws IOException {
     final String defaultRule;
+    HadoopKerberosName.conf = conf;
     switch (SecurityUtil.getAuthenticationMethod(conf)) {
       case KERBEROS:
       case KERBEROS_SSL:
@@ -73,9 +166,11 @@ public class HadoopKerberosName extends KerberosName {
     }
     String ruleString = conf.get(HADOOP_SECURITY_AUTH_TO_LOCAL, defaultRule);
     setRules(ruleString);
+
   }
 
   public static void main(String[] args) throws Exception {
+// TBD - is setConfiguration only for main?
     setConfiguration(new Configuration());
     for(String arg: args) {
       HadoopKerberosName name = new HadoopKerberosName(arg);

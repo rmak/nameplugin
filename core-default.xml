@@ -414,7 +414,68 @@ for ldap providers in the same way as above does.
   <description>Maps kerberos principals to local user names</description>
 </property>
 
-<!-- i/o properties -->
+<!-- 
+=== Multiple user mapping providers configuration sample === 
+Note: this set of configuration parameters modeled from group mapping providers configuration.
+  This sample illustrates a typical use case for complex user name mapping 
+between kerberos principals to local user names beyond the simple regular expression 
+specified in the parameter hadoop.security.auth_to_local.
+  If one new name mapping plugin can do the job, specify the name mapping plugin 
+in the parameter, hadoop.security.user.mapping, directly.
+  If multiple name mapping plugins are required in case of complex scenario, another class, CompositeUserMapping,
+is introduced to manage the multiple name mapping plugins. In this case, CompositeUserMapping is used in the parameter,
+haddop.security.user.mapping and then all the necessary name mapping plugins can be listed in another paramter,
+hadoop.security.user.mapping.providers. Here are the sample configurations for the complex scenario.
+The plugins used in this sample, org.someone.ShellBasedUserMapping, org.someone.OtherUserMappingA and 
+org.someone.OtherUserMappingB are arbitrary and may be from third parties.
+
+<property>
+  <name>hadoop.security.user.mapping</name>
+  <value>org.apache.hadoop.security.CompositeUserMapping</value>
+  <description>
+    Class for long user name to short user name mapping, which 
+    makes use of other multiple providers to provide the service.
+  </description>
+</property>
+
+<property>
+  <name>hadoop.security.user.mapping.providers</name>
+  <value>shell4services,ad4usersX,ad4usersY</value>
+  <description>
+    Comma separated list of name mapping providers to provide kerberos credentials to local user names mapping. 
+  </description>
+</property>
+
+<property>
+  <name>hadoop.security.user.mapping.provider.shell4services</name>
+  <value>org.someone.ShellBasedUserMapping</value>
+  <description>
+    Class for user mapping provider named by 'shell4services'. The name can then be referenced 
+    by hadoop.security.user.mapping.providers property.
+  </description>
+</property>
+
+<property>
+  <name>hadoop.security.user.mapping.provider.ad4usersX</name>
+  <value>org.someone.OtherUserMappingA</value>
+  <description>
+    Class for user mapping provider named by 'ad4usersX'. The name can then be referenced 
+    by hadoop.security.user.mapping.providers property.
+  </description>
+</property>
+
+<property>
+  <name>hadoop.security.user.mapping.provider.ad4usersY</name>
+  <value>org.someone.OtherUserMappingB</value>
+  <description>
+    Class for user mapping provider named by 'ad4usersY'. The name can then be referenced 
+    by hadoop.security.user.mapping.providers property.
+  </description>
+</property>
+
+-->
+ 
+ <!-- i/o properties -->
 <property>
   <name>io.file.buffer.size</name>
   <value>4096</value>
