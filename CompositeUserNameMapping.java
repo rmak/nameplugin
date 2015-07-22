@@ -46,12 +46,12 @@ public class CompositeUserNameMapping
   public static final String MAPPING_PROVIDER_CONFIG_PREFIX = USER_NAME_MAPPING_CONFIG_PREFIX + ".provider";
   
   private static final Log LOG = LogFactory.getLog(CompositeUserNameMapping.class);
-
+  
   private List<UserNameMappingServiceProvider> providersList = 
-		new ArrayList<UserNameMappingServiceProvider>();
+    new ArrayList<UserNameMappingServiceProvider>();
   
   private Configuration conf;
-
+  
   /**
    * Get the short name of a given user.
    * 
@@ -60,11 +60,11 @@ public class CompositeUserNameMapping
    */
   @Override
   public synchronized String getShortName(String user) throws IOException {
-
+  
     String userShortName = null;
     for (UserNameMappingServiceProvider provider : providersList) {
       try {
-    	userShortName = provider.getShortName(user);
+        userShortName = provider.getShortName(user);
       } catch (Exception e) {
         //LOG.warn("Exception trying to get short name of user " + user, e);      
       }        
@@ -73,7 +73,7 @@ public class CompositeUserNameMapping
         break;
       }
     }
-
+    
     return userShortName;
   }
   
@@ -84,7 +84,7 @@ public class CompositeUserNameMapping
   public void cacheUserNameRefresh() throws IOException {
     // does nothing in this provider of user name mapping
   }
-
+  
   /** 
    * Adds user name to cache, no need to do that for this provider
    *
@@ -94,12 +94,12 @@ public class CompositeUserNameMapping
   public void cacheUserNameAdd(List<String> user) throws IOException {
     // does nothing in this provider of user name mapping
   }
-
+  
   @Override
   public synchronized Configuration getConf() {
     return conf;
   }
-
+  
   @Override
   public synchronized void setConf(Configuration conf) {
     this.conf = conf;
@@ -109,7 +109,7 @@ public class CompositeUserNameMapping
   
   private void loadMappingProviders() {
     String[] providerNames = conf.getStrings(MAPPING_PROVIDERS_CONFIG_KEY, new String[]{});
-
+    
     String providerKey;
     for (String name : providerNames) {
       providerKey = MAPPING_PROVIDER_CONFIG_PREFIX + "." + name;
@@ -121,15 +121,15 @@ public class CompositeUserNameMapping
       }
     }
   }
-    
+  
   private void addMappingProvider(String providerName, Class<?> providerClass) {
     Configuration newConf = prepareConf(providerName);
     UserNameMappingServiceProvider provider = 
       (UserNameMappingServiceProvider) ReflectionUtils.newInstance(providerClass, newConf);
     providersList.add(provider);
-
+  
   }
-
+  
   /*
    * For any provider specific configuration properties, such as "hadoop.security.user.name.mapping.ldap.url" 
    * and the like, allow them to be configured as "hadoop.security.user.name.mapping.provider.PROVIDER-X.ldap.url",

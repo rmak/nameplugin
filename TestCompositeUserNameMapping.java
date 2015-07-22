@@ -30,7 +30,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.junit.Test;
 
-
 public class TestCompositeUserNameMapping {
   public static final Log LOG = LogFactory.getLog(TestCompositeUserNameMapping.class);
   private static Configuration conf = new Configuration();
@@ -58,24 +57,24 @@ public class TestCompositeUserNameMapping {
   
   private static abstract class UserNameMappingProviderBase 
     implements UserNameMappingServiceProvider, Configurable {
-
+    
     private Configuration conf;
     
     @Override
     public void setConf(Configuration conf) {
       this.conf = conf;
     }
-
+    
     @Override
     public Configuration getConf() {
       return this.conf;
     }
-
+    
     @Override
     public void cacheUserNameRefresh() throws IOException {
       
     }
-
+    
     @Override
     public void cacheUserNameAdd(List<String> user) throws IOException {
       
@@ -129,17 +128,17 @@ public class TestCompositeUserNameMapping {
 
     conf.setClass(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + ".UserNameProviderA", 
       UserNameProviderA.class, UserNameMappingServiceProvider.class);
-
+    
     conf.setClass(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + ".UserNameProviderB", 
       UserNameProviderB.class, UserNameMappingServiceProvider.class);
-
+    
     conf.set(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + 
       ".UserNameProviderA" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_A);
-
+    
     conf.set(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + 
       ".UserNameProviderB" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_B);
   }
-
+  
   @Test
   public void TestMultipleUserNameMapping() throws Exception {
     HadoopKerberosName.setConfiguration(conf);

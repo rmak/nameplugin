@@ -46,14 +46,13 @@ public class HadoopKerberosName extends KerberosName {
   private UserNameMappingServiceProvider impl;
   private static Configuration conf = null;
   
-
   /**
    * Create a name from the full Kerberos principal name.
    * @param name
    */
   public HadoopKerberosName(String name) {
     super(name);
-
+    
     if (conf == null)
       conf = new Configuration();
     
@@ -68,12 +67,12 @@ public class HadoopKerberosName extends KerberosName {
       impl = 
         ReflectionUtils.newInstance(
           conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, null,
-                        UserNameMappingServiceProvider.class), 
+            UserNameMappingServiceProvider.class), 
           conf);
     } catch (Exception e) {
       impl = null;
     }
-
+    
     if(LOG.isDebugEnabled()) {
       if (impl == null) 
         LOG.debug("user name mapping impl=null");
