@@ -74,12 +74,12 @@ public class HadoopKerberosName extends KerberosName {
       impl = null;
     }
 
-//    if(LOG.isDebugEnabled())
-//      LOG.debug("user name mapping impl=" + impl.getClass().getName());
-    if (impl == null) 
-      LOG.info("user name mapping impl=null");
-    else
-      LOG.info("user name mapping impl=" + impl.getClass().getName());
+    if(LOG.isDebugEnabled()) {
+      if (impl == null) 
+        LOG.debug("user name mapping impl=null");
+      else
+        LOG.debug("user name mapping impl=" + impl.getClass().getName());
+    }
   }
   
   /**
@@ -92,17 +92,17 @@ public class HadoopKerberosName extends KerberosName {
   public synchronized String getShortName() throws IOException {
     String userShortName;
     if (impl == null) {
-      LOG.info("impl is null - trying " + super.getClass().getName());
+      //LOG.info("impl is null - trying " + super.getClass().getName());
       userShortName = super.getShortName();
-      LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+      //LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
     }
     else {
       userShortName = impl.getShortName(super.toString());
-      LOG.info("user short name from impl " + impl.getClass().getName() + " = " + userShortName);
+      //LOG.info("user short name from impl " + impl.getClass().getName() + " = " + userShortName);
       if (userShortName == null || userShortName.isEmpty()) {
-        LOG.info("user short name from impl is null or empty - trying " + super.getClass().getName());
+        //LOG.info("user short name from impl is null or empty - trying " + super.getClass().getName());
         userShortName = super.getShortName();
-        LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+        //LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
       }      
     }
     return userShortName;

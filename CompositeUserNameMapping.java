@@ -43,7 +43,6 @@ public class CompositeUserNameMapping
   implements UserNameMappingServiceProvider, Configurable {
   
   public static final String MAPPING_PROVIDERS_CONFIG_KEY = USER_NAME_MAPPING_CONFIG_PREFIX + ".providers";
-  public static final String MAPPING_PROVIDERS_COMBINED_CONFIG_KEY = MAPPING_PROVIDERS_CONFIG_KEY + ".combined";
   public static final String MAPPING_PROVIDER_CONFIG_PREFIX = USER_NAME_MAPPING_CONFIG_PREFIX + ".provider";
   
   private static final Log LOG = LogFactory.getLog(CompositeUserNameMapping.class);
@@ -70,7 +69,7 @@ public class CompositeUserNameMapping
         //LOG.warn("Exception trying to get short name of user " + user, e);      
       }        
       if (userShortName != null && ! userShortName.isEmpty()) {
-        LOG.info("get short name of user " + user + " found by provider " + provider.getClass().getName());      
+        //LOG.info("get short name of user " + user + " found by provider " + provider.getClass().getName());      
         break;
       }
     }
