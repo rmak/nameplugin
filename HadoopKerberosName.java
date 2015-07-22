@@ -91,17 +91,22 @@ public class HadoopKerberosName extends KerberosName {
   public synchronized String getShortName() throws IOException {
     String userShortName;
     if (impl == null) {
-      //LOG.info("impl is null - trying " + super.getClass().getName());
+      if(LOG.isDebugEnabled())
+        LOG.debug("impl is null - trying " + super.getClass().getName());
       userShortName = super.getShortName();
-      //LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+      if(LOG.isDebugEnabled())
+        LOG.debug("user short name from " + super.getClass().getName() + " is " + userShortName);
     }
     else {
       userShortName = impl.getShortName(super.toString());
-      //LOG.info("user short name from impl " + impl.getClass().getName() + " = " + userShortName);
+      if(LOG.isDebugEnabled())
+        LOG.debug("user short name from impl " + impl.getClass().getName() + " = " + userShortName);
       if (userShortName == null || userShortName.isEmpty()) {
-        //LOG.info("user short name from impl is null or empty - trying " + super.getClass().getName());
+        if(LOG.isDebugEnabled())
+          LOG.debug("user short name from impl is null or empty - trying " + super.getClass().getName());
         userShortName = super.getShortName();
-        //LOG.info("user short name from " + super.getClass().getName() + " is " + userShortName);
+        if(LOG.isDebugEnabled())
+          LOG.debug("user short name from " + super.getClass().getName() + " is " + userShortName);
       }      
     }
     return userShortName;

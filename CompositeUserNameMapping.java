@@ -66,10 +66,12 @@ public class CompositeUserNameMapping
       try {
         userShortName = provider.getShortName(user);
       } catch (Exception e) {
-        //LOG.warn("Exception trying to get short name of user " + user, e);      
+        if(LOG.isDebugEnabled())
+          LOG.debug("Exception trying to get short name of user " + user, e);      
       }        
       if (userShortName != null && ! userShortName.isEmpty()) {
-        //LOG.info("get short name of user " + user + " found by provider " + provider.getClass().getName());      
+        if(LOG.isDebugEnabled())
+          LOG.debug("get short name of user " + user + " found by provider " + provider.getClass().getName());      
         break;
       }
     }
