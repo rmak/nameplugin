@@ -38,8 +38,6 @@ import org.apache.commons.logging.LogFactory;
  * operating system names.
  */
 @SuppressWarnings("all")
-// TBD - why limited private for hdfs and mapreduce?
-// TBD - what's the difference between HadoopKerberosName and KerberosName?
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class HadoopKerberosName extends KerberosName {
@@ -82,30 +80,6 @@ public class HadoopKerberosName extends KerberosName {
       LOG.info("user name mapping impl=null");
     else
       LOG.info("user name mapping impl=" + impl.getClass().getName());
-
-/*
-    // TBD - dont know who using the following logic
-    final String defaultRule;
-    switch (SecurityUtil.getAuthenticationMethod(conf)) {
-      case KERBEROS:
-      case KERBEROS_SSL:
-        try {
-          KerberosUtil.getDefaultRealm();
-        } catch (Exception ke) {
-          throw new IllegalArgumentException("Can't get Kerberos realm", ke);
-        }
-// TBD -if using kerberos, default rule only applies to default realm
-        defaultRule = "DEFAULT";
-        break;
-      default:
-// TBD - if simple authentication, use service name for all realms
-        // just extract the simple user name
-        defaultRule = "RULE:[1:$1] RULE:[2:$1]";
-        break; 
-    }
-    String ruleString = conf.get(HADOOP_SECURITY_AUTH_TO_LOCAL, defaultRule);
-    setRules(ruleString);
-*/
   }
   
   /**
@@ -134,7 +108,6 @@ public class HadoopKerberosName extends KerberosName {
     return userShortName;
   }
   
-// TBD - why setConfiguration separately? who uses it?
   /**
    * Set the static configuration to get the rules.
    * Also save configuration for initialization use if call before object created.
@@ -170,7 +143,6 @@ public class HadoopKerberosName extends KerberosName {
   }
 
   public static void main(String[] args) throws Exception {
-// TBD - is setConfiguration only for main?
     setConfiguration(new Configuration());
     for(String arg: args) {
       HadoopKerberosName name = new HadoopKerberosName(arg);

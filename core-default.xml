@@ -418,13 +418,14 @@ for ldap providers in the same way as above does.
 === Multiple user mapping providers configuration sample === 
 Note: this set of configuration parameters modeled from group mapping providers configuration.
   This sample illustrates a typical use case for complex user name mapping 
-between kerberos principals to local user names beyond the simple regular expression 
+between Kerberos principals to local user names beyond the simple regular expression 
 specified in the parameter hadoop.security.auth_to_local.
-  If one new name mapping plugin can do the job, specify the name mapping plugin 
-in the parameter, hadoop.security.user.mapping, directly.
-  If multiple name mapping plugins are required in case of complex scenario, another class, CompositeUserMapping,
-is introduced to manage the multiple name mapping plugins. In this case, CompositeUserMapping is used in the parameter,
-haddop.security.user.mapping and then all the necessary name mapping plugins can be listed in another paramter,
+  If one name mapping plugin can do the job, specify the name mapping plugin in the parameter, 
+hadoop.security.user.mapping, directly.
+  If multiple name mapping plugins are required in case of complex scenario, another class, 
+CompositeUserMapping, is introduced to manage the multiple name mapping plugins. 
+In this case, CompositeUserMapping is used in the parameter, haddop.security.user.mapping 
+and then all the necessary name mapping plugins can be listed in another parameter,
 hadoop.security.user.mapping.providers. Here are the sample configurations for the complex scenario.
 The plugins used in this sample, org.someone.ShellBasedUserMapping, org.someone.OtherUserMappingA and 
 org.someone.OtherUserMappingB are arbitrary and may be from third parties.
@@ -433,8 +434,9 @@ org.someone.OtherUserMappingB are arbitrary and may be from third parties.
   <name>hadoop.security.user.mapping</name>
   <value>org.apache.hadoop.security.CompositeUserMapping</value>
   <description>
-    Class for long user name to short user name mapping, which 
-    makes use of other multiple providers to provide the service.
+    Class for Kerberos principal to local user name mapping. If CompositeUserMapping class is specified,
+    then it uses another parameter, hadoop.security.user.mapping.provides, to manage multiple providers 
+    for the user name mapping service.
   </description>
 </property>
 
@@ -442,7 +444,9 @@ org.someone.OtherUserMappingB are arbitrary and may be from third parties.
   <name>hadoop.security.user.mapping.providers</name>
   <value>shell4services,ad4usersX,ad4usersY</value>
   <description>
-    Comma separated list of name mapping providers to provide kerberos credentials to local user names mapping. 
+    Comma separated list of name mapping providers to provide Kerberos credentials to local user names mapping.
+    The names specified here are then used prefixed with "hadoop.security.user.mapping.provider." to get the names of 
+    corresponding user name mapping plugins. 
   </description>
 </property>
 

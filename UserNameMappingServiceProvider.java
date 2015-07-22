@@ -25,7 +25,7 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 
 /**
- * An interface for the implementation of a kerberos-principle-name-to-unix-name mapping service
+ * An interface for the implementation of a Kerberos-principle-name-to-unix-name mapping service
  * used by {@link HadoopKerberosName}.
  */
 @InterfaceAudience.Public
@@ -37,13 +37,13 @@ public interface UserNameMappingServiceProvider {
    * Get the translation of the principal name into an operating system
    * user name.
    * Returns EMPTY list in case of non-existing user
-   * @param user User's kerberos principle name
+   * @param user User's Kerberos principle name
    * @return user's short name
    * @throws IOException
    */
   public String getShortName(String user) throws IOException;
   /**
-   * Refresh the cache of user kerberos principle name to unix name mapping
+   * Refresh the cache of user Kerberos principle name to unix name mapping
    * @throws IOException
    */
   public void cacheUserNameRefresh() throws IOException;

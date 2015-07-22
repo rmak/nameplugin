@@ -276,8 +276,8 @@ public class CommonConfigurationKeysPublic {
   public static final String  HADOOP_SECURITY_AUTH_TO_LOCAL =
     "hadoop.security.auth_to_local";
   public static final String  HADOOP_SECURITY_USER_NAME_MAPPING =
-		    "hadoop.security.user.name.mapping";
-		  /** See <a href="{@docRoot}/../core-default.html">core-default.xml</a> */
+    "hadoop.security.user.name.mapping";
+  /** See <a href="{@docRoot}/../core-default.html">core-default.xml</a> */
   @Deprecated
   /** Only used by HttpServer. */
   public static final String HADOOP_SSL_ENABLED_KEY = "hadoop.ssl.enabled";

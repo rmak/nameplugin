@@ -52,7 +52,7 @@ public class TestCompositeUserNameMapping {
   
   private static final String PROVIDER_SPECIFIC_CONF = ".test.prop";
   private static final String PROVIDER_SPECIFIC_CONF_KEY = 
-      UserNameMappingServiceProvider.USER_NAME_MAPPING_CONFIG_PREFIX + PROVIDER_SPECIFIC_CONF;
+    UserNameMappingServiceProvider.USER_NAME_MAPPING_CONFIG_PREFIX + PROVIDER_SPECIFIC_CONF;
   private static final String PROVIDER_SPECIFIC_CONF_VALUE_FOR_A = "value-for-A";
   private static final String PROVIDER_SPECIFIC_CONF_VALUE_FOR_B = "value-for-B";
   
@@ -77,7 +77,7 @@ public class TestCompositeUserNameMapping {
     }
 
     @Override
-    public void cacheUserNameAdd(List<String> groups) throws IOException {
+    public void cacheUserNameAdd(List<String> user) throws IOException {
       
     }
     
@@ -113,7 +113,7 @@ public class TestCompositeUserNameMapping {
       String shortName = null;
       if (user.equals(hdfs.name)) {
         shortName = hdfs.shortName;
-      } else if (user.equals(jack.name)) { // jack has another group from clusterProvider
+      } else if (user.equals(jack.name)) { // jack has another shortName from clusterProvider
         shortName = jack.shortName;
       }
       
@@ -128,16 +128,16 @@ public class TestCompositeUserNameMapping {
     conf.set(CompositeUserNameMapping.MAPPING_PROVIDERS_CONFIG_KEY, "UserNameProviderA,UserNameProviderB");
 
     conf.setClass(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + ".UserNameProviderA", 
-        UserNameProviderA.class, UserNameMappingServiceProvider.class);
+      UserNameProviderA.class, UserNameMappingServiceProvider.class);
 
     conf.setClass(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + ".UserNameProviderB", 
-        UserNameProviderB.class, UserNameMappingServiceProvider.class);
+      UserNameProviderB.class, UserNameMappingServiceProvider.class);
 
     conf.set(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + 
-        ".UserNameProviderA" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_A);
+      ".UserNameProviderA" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_A);
 
     conf.set(CompositeUserNameMapping.MAPPING_PROVIDER_CONFIG_PREFIX + 
-        ".UserNameProviderB" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_B);
+      ".UserNameProviderB" + PROVIDER_SPECIFIC_CONF, PROVIDER_SPECIFIC_CONF_VALUE_FOR_B);
   }
 
   @Test

@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-//import java.util.Set;
-//import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +40,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class CompositeUserNameMapping
-    implements UserNameMappingServiceProvider, Configurable {
+  implements UserNameMappingServiceProvider, Configurable {
   
   public static final String MAPPING_PROVIDERS_CONFIG_KEY = USER_NAME_MAPPING_CONFIG_PREFIX + ".providers";
   public static final String MAPPING_PROVIDERS_COMBINED_CONFIG_KEY = MAPPING_PROVIDERS_CONFIG_KEY + ".combined";
@@ -51,12 +49,9 @@ public class CompositeUserNameMapping
   private static final Log LOG = LogFactory.getLog(CompositeUserNameMapping.class);
 
   private List<UserNameMappingServiceProvider> providersList = 
-		  new ArrayList<UserNameMappingServiceProvider>();
+		new ArrayList<UserNameMappingServiceProvider>();
   
   private Configuration conf;
-//  private boolean combined;
-
-
 
   /**
    * Get the short name of a given user.
@@ -66,7 +61,6 @@ public class CompositeUserNameMapping
    */
   @Override
   public synchronized String getShortName(String user) throws IOException {
-//    Set<String> groupSet = new TreeSet<String>();
 
     String userShortName = null;
     for (UserNameMappingServiceProvider provider : providersList) {
@@ -76,15 +70,11 @@ public class CompositeUserNameMapping
         //LOG.warn("Exception trying to get short name of user " + user, e);      
       }        
       if (userShortName != null && ! userShortName.isEmpty()) {
-//        groupSet.addAll(groups);
-//        if (!combined) break;
         LOG.info("get short name of user " + user + " found by provider " + provider.getClass().getName());      
         break;
       }
     }
 
-//    List<String> results = new ArrayList<String>(groupSet.size());
-//    results.addAll(groupSet);
     return userShortName;
   }
   
@@ -93,7 +83,7 @@ public class CompositeUserNameMapping
    */
   @Override
   public void cacheUserNameRefresh() throws IOException {
-    // does nothing in this provider of user to groups mapping
+    // does nothing in this provider of user name mapping
   }
 
   /** 
@@ -103,7 +93,7 @@ public class CompositeUserNameMapping
    */
   @Override
   public void cacheUserNameAdd(List<String> user) throws IOException {
-    // does nothing in this provider of user to groups mapping
+    // does nothing in this provider of user name mapping
   }
 
   @Override
@@ -114,8 +104,6 @@ public class CompositeUserNameMapping
   @Override
   public synchronized void setConf(Configuration conf) {
     this.conf = conf;
-    
-//    this.combined = conf.getBoolean(MAPPING_PROVIDERS_COMBINED_CONFIG_KEY, true);
     
     loadMappingProviders();
   }
@@ -138,7 +126,7 @@ public class CompositeUserNameMapping
   private void addMappingProvider(String providerName, Class<?> providerClass) {
     Configuration newConf = prepareConf(providerName);
     UserNameMappingServiceProvider provider = 
-        (UserNameMappingServiceProvider) ReflectionUtils.newInstance(providerClass, newConf);
+      (UserNameMappingServiceProvider) ReflectionUtils.newInstance(providerClass, newConf);
     providersList.add(provider);
 
   }
@@ -157,7 +145,7 @@ public class CompositeUserNameMapping
       String key = entry.getKey();
       // get a property like "hadoop.security.user.name.mapping.provider.PROVIDER-X.ldap.url"
       if (key.startsWith(providerKey) && !key.equals(providerKey)) {
-        // restore to be the one like "hadoop.security.group.mapping.ldap.url" 
+        // restore to be the one like "hadoop.security.user.mapping.ldap.url" 
         // so that can be used by original provider.
         key = key.replace(".provider." + providerName, "");
         newConf.set(key, entry.getValue());
