@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 public class HadoopKerberosName extends KerberosName {
   private static final Log LOG = LogFactory.getLog(HadoopKerberosName.class);
   
+  private String mapping;
   private UserNameMappingServiceProvider impl;
   private static Configuration conf = null;
   
@@ -56,21 +57,25 @@ public class HadoopKerberosName extends KerberosName {
     if (conf == null)
       conf = new Configuration();
     
-// TBD - may not want to have default impl and instead directly pass through to use rules
-//    impl = 
-//        ReflectionUtils.newInstance(
-//          conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, 
-//                        ShellBasedUserNameMapping.class, 
-//                        UserNameMappingServiceProvider.class), 
-//          conf);
-    try {
-      impl = 
+    mapping = conf.getTrimmed(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING);
+    if (mapping != null && !mapping.isEmpty()) {
+      if(LOG.isDebugEnabled())
+        LOG.debug("hadoop.security.user.name.mapping is " + mapping);
+//      try {
+        impl = 
         ReflectionUtils.newInstance(
-          conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, null,
-            UserNameMappingServiceProvider.class), 
-          conf);
-    } catch (Exception e) {
+          conf.getClass(CommonConfigurationKeys.HADOOP_SECURITY_USER_NAME_MAPPING, null, 
+            UserNameMappingServiceProvider.class), conf);
+//      } catch (Exception e) {
+//        impl = null;
+//        if(LOG.isDebugEnabled())
+//          LOG.debug("caught exception and impl set to null");
+//      }
+    }
+    else {
       impl = null;
+      if(LOG.isDebugEnabled())
+        LOG.debug("hadoop.security.user.name.mapping is not defined and hence impl is null");
     }
     
     if(LOG.isDebugEnabled()) {
