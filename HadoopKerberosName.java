@@ -112,7 +112,7 @@ public class HadoopKerberosName extends KerberosName {
         userShortName = super.getShortName();
         if(LOG.isDebugEnabled())
           LOG.debug("user short name from " + super.getClass().getName() + " is " + userShortName);
-      }      
+      }
     }
     return userShortName;
   }
@@ -148,7 +148,6 @@ public class HadoopKerberosName extends KerberosName {
     }
     String ruleString = conf.get(HADOOP_SECURITY_AUTH_TO_LOCAL, defaultRule);
     setRules(ruleString);
-
   }
 
   public static void main(String[] args) throws Exception {
